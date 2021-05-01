@@ -4,7 +4,6 @@
   "description": "Quantos mysql helper for node",
   "author": "fabriziotognetto <info@quantos.it>",
   "main": "dist/index.js",
-  "private": "true",
   "scripts": {
     "build": "tsc"
   },
