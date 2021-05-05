@@ -5,7 +5,7 @@ const host = process.env.SQL_HOST;
 const dbUser = process.env.SQL_USER;
 const dbPassword = process.env.SQL_PASSWORD;
 const dbName = process.env.SQL_NAME;
-const connectionLimit = process.env.SQL_CONNECTION_LIMIT || 100;
+const connectionLimit = (process.env.SQL_CONNECTION_LIMIT && Number.parseInt(process.env.SQL_CONNECTION_LIMIT)) || 100;
 
 const mysqlConfig: mysql.PoolConfig = {
   user: dbUser,
