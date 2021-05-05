@@ -5,13 +5,14 @@ const host = process.env.SQL_HOST;
 const dbUser = process.env.SQL_USER;
 const dbPassword = process.env.SQL_PASSWORD;
 const dbName = process.env.SQL_NAME;
+const connectionLimit = process.env.SQL_CONNECTION_LIMIT || 100;
 
 const mysqlConfig: mysql.PoolConfig = {
   user: dbUser,
   password: dbPassword,
   database: dbName,
   charset: 'utf8mb4_unicode_ci',
-  connectionLimit: 100
+  connectionLimit: connectionLimit
 };
 if (process.env.NODE_ENV === 'production') {
   mysqlConfig.socketPath = `/cloudsql/${connectionName}`;
