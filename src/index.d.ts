@@ -1,1 +1,1 @@
-declare module '@bigartwall/mysql-helper';
+declare module '@quantos/mysql-helper';
