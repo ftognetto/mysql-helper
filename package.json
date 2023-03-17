@@ -12,6 +12,7 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
+    "@types/node": "^18.15.3",
     "@types/mysql": "^2.15.21",
     "ts-loader": "^9.4.2",
     "tslint": "^6.1.3",
