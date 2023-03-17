@@ -1,6 +1,6 @@
 {
   "name": "@quantos/mysql-helper",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Quantos mysql helper for node",
   "author": "fabriziotognetto <info@quantos.it>",
   "main": "dist/index.js",
