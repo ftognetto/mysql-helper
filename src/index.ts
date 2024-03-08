@@ -1,4 +1,4 @@
-import mysql from 'mysql';
+import mysql from 'mysql2/promise';
 
 const connectionName = process.env.SQL_CONNECTION_NAME;
 const host = process.env.SQL_HOST;
@@ -7,7 +7,7 @@ const dbPassword = process.env.SQL_PASSWORD;
 const dbName = process.env.SQL_NAME;
 const connectionLimit = (process.env.SQL_CONNECTION_LIMIT && Number.parseInt(process.env.SQL_CONNECTION_LIMIT)) || 100;
 
-const mysqlConfig: mysql.PoolConfig = {
+const mysqlConfig: mysql.PoolOptions = {
   user: dbUser,
   password: dbPassword,
   database: dbName,
@@ -64,68 +64,28 @@ export class Db {
   }
 
   async query(query: string, values?: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const db = this._transaction || this._pool;
-      return db.query(query, values, function (err: mysql.MysqlError | null, results?: any, fields?: mysql.FieldInfo[]): void {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results);
-        }
-      });
-    });
+    const db = this._transaction || this._pool;
+    const [rows] = await db.query(query, values);
+    return rows;
   }
 
   async beginTransaction(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      return this._pool.getConnection((err: mysql.MysqlError, conn: mysql.PoolConnection) => {
-        if (err) {
-          reject(err);
-        } else {
-          return conn.beginTransaction((err2: mysql.MysqlError) => {
-            if (err2) {
-              reject(err2);
-            } else {
-              this._transaction = conn;
-              resolve();
-            }
-          });
-        }
-      });
-    });
+    const conn = await this._pool.getConnection();
+    conn.beginTransaction();
+    this._transaction = conn;
   }
 
   async commit(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (!this._transaction) {
-        throw Error('No transaction currently started');
-      }
-      return this._transaction.commit((err: mysql.MysqlError) => {
-        (this._transaction as mysql.PoolConnection).release();
-        this._transaction = null;
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+    if (!this._transaction) {
+      throw Error('No transaction currently started');
+    }
+    await this._transaction.commit();
   }
 
   async rollback(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (!this._transaction) {
-        throw Error('No transaction currently started');
-      }
-      return this._transaction.rollback((err: mysql.MysqlError) => {
-        (this._transaction as mysql.PoolConnection).release();
-        this._transaction = null;
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+    if (!this._transaction) {
+      throw Error('No transaction currently started');
+    }
+    await this._transaction.rollback();
   }
 }
