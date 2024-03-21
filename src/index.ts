@@ -34,12 +34,11 @@ export class DbPool {
   constructor() {
     this.pool = mysql.createPool(mysqlConfig);
     const logTimeout = setInterval(() => {
-      const _allConnections = (this.pool as any)._allConnections.length;
-      const _acquiringConnections = (this.pool as any)._acquiringConnections.length;
-      const _freeConnections = (this.pool as any)._freeConnections.length;
-      const _connectionQueue = (this.pool as any)._connectionQueue.length;
+      const _allConnections = (this.pool.pool as any)._allConnections.length;
+      const _freeConnections = (this.pool.pool as any)._freeConnections.length;
+      const _connectionQueue = (this.pool.pool as any)._connectionQueue.length;
       console.log(
-        `[MYSQL CONNECTION STATUS] All Connections ${_allConnections} - Acquiring Connections ${_acquiringConnections} - Free Connections ${_freeConnections} - Queue Connections ${_connectionQueue}`
+        `[MYSQL CONNECTION STATUS] All Connections ${_allConnections} - Free Connections ${_freeConnections} - Queue Connections ${_connectionQueue}`
       );
       if (_allConnections === mysqlConfig.connectionLimit && _freeConnections < (mysqlConfig.connectionLimit as number) / 2) {
         console.error(new Error('Mysql pool connection limit alert'));
